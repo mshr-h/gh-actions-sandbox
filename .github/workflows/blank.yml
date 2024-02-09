@@ -24,10 +24,13 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: systemd-run --scope -p MemoryMax=8G --user echo Hello, world!
+        run: python check_if_running_in_gha.py
 
       # Runs a set of commands using the runners shell
       - name: Check system memory

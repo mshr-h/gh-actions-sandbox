@@ -36,7 +36,7 @@ jobs:
           echo "$COMMENTS"
 
           # 3. LLMへの入力を構成
-          INPUT="Issue Title: $ISSUE_TITLE\n\nIssue Body:\n$ISSUE_BODY\n\nComments:\n$COMMENTS\n\nInstruction: $INSTRUCTION"
+          INPUT="Instruction: $INSTRUCTION\n---\nIssue Title: $ISSUE_TITLE\n\nIssue Body:\n$ISSUE_BODY\n\nComments:\n$COMMENTS"
           echo "$INPUT"
 
           # 4. OpenAIへ送信（GPT-4も可）

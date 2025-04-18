@@ -31,7 +31,7 @@ jobs:
           INSTRUCTION=$(echo "$COMMENT_BODY" | sed -n 's/.*@summary-bot\s*\(.*\)/\1/p')
 
           if [ -z "$INSTRUCTION" ]; then
-            INSTRUCTION=${{ env.DEFAULT_INSTRUCTION }}
+            INSTRUCTION="${{ env.DEFAULT_INSTRUCTION }}"
           fi
 
           COMMENTS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$ISSUE_COMMENTS_URL" | jq -r '.[] | "\(.user.login): \(.body)"' | tr '\n' '\\n')

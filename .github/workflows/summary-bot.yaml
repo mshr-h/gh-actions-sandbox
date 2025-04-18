@@ -43,7 +43,7 @@ jobs:
           INPUT="$INSTRUCTION\n---\nIssue Title: $ISSUE_TITLE\n\nIssue Body:\n$ISSUE_BODY\n\nComments:\n$COMMENTS"
           echo "$INPUT"
 
-          RESPONSE="$(gh models run \"${{ env.MODEL_NAME }}\" \"$INPUT\")"
+          RESPONSE="$(gh models run ${{ env.MODEL_NAME }} \"$INPUT\")"
           echo "$RESPONSE"
 
           gh issue comment ${{ github.event.issue.number }} --body "$RESPONSE"

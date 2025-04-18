@@ -10,6 +10,7 @@ permissions:
   issues: write
 
 jobs:
+  if: contains(github.event.comment.body, '@summary-bot')
   run-summary-bot:
     runs-on: ubuntu-latest
     env:

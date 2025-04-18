@@ -1,0 +1,68 @@
+name: summary-bot
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  run-summary-bot:
+    permissions:
+      issues: write
+      models: read
+    if: contains(github.event.comment.body, '@summary-bot')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Extract Info and Run Summary
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 1. イベントデータ取得
+          EVENT_PATH=$GITHUB_EVENT_PATH
+          COMMENT_BODY=$(jq -r .comment.body "$EVENT_PATH")
+          COMMENT_USER=$(jq -r .comment.user.login "$EVENT_PATH")
+          ISSUE_URL=$(jq -r .issue.url "$EVENT_PATH")
+          ISSUE_COMMENTS_URL=$(jq -r .issue.comments_url "$EVENT_PATH")
+          ISSUE_TITLE=$(jq -r .issue.title "$EVENT_PATH")
+          ISSUE_BODY=$(jq -r .issue.body "$EVENT_PATH")
+          INSTRUCTION=$(echo "$COMMENT_BODY" | sed -n 's/.*@summary-bot\s*\(.*\)/\1/p')
+
+          if [ -z "$INSTRUCTION" ]; then
+            INSTRUCTION="Summarize this issue."
+          fi
+
+          # 2. 過去のコメント取得
+          COMMENTS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$ISSUE_COMMENTS_URL" | jq -r '.[] | "\(.user.login): \(.body)"' | tr '\n' '\\n')
+
+          # 3. LLMへの入力を構成
+          INPUT="Issue Title: $ISSUE_TITLE\n\nIssue Body:\n$ISSUE_BODY\n\nComments:\n$COMMENTS\n\nInstruction: $INSTRUCTION"
+
+          # 4. OpenAIへ送信（GPT-4も可）
+          SUMMARY=$(curl -X POST "https://models.github.ai/inference/chat/completions" \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -d '{
+                  "messages": [
+                      {
+                          "role": "system",
+                          "content": "You are a helpful assistant."
+                      },
+                      {
+                          "role": "user",
+                          "content": "What is the capital of France?"
+                      }
+                  ],
+                  "temperature": 1.0,
+                  "top_p": 1.0,
+                  "model": "openai/gpt-4.1-mini"
+              }' | jq -r '.choices[0].message.content')
+
+          echo "Summary generated:"
+          echo "$SUMMARY"
+
+          # 5. コメントとして投稿
+          COMMENT_URL=$(jq -r .issue.comments_url "$EVENT_PATH")
+          curl -s -X POST "$COMMENT_URL" \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"body\": \"👋 @${COMMENT_USER}\n\n📄 **Result:**\n\n${SUMMARY}\"}"

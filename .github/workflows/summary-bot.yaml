@@ -43,4 +43,4 @@ jobs:
           echo "MODEL_RESPONSE=$(gh models run gpt-4.1-mini $INSTRUCTION)" >> ${GITHUB_ENV}
           echo "$MODEL_RESPONSE"
       - name: Comment
-        run: gh pr comment ${{ github.event.issue.number }} --body "${{ env.MODEL_RESPONSE }}"
+        run: gh issue comment ${{ github.event.issue.number }} --body "${{ env.MODEL_RESPONSE }}"

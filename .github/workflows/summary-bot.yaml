@@ -15,6 +15,8 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       DEFAULT_INSTRUCTION: 以下のGitHub Issueの議論を要約して。
+      # you can choose a model from https://github.com/marketplace?type=models
+      MODEL_NAME: gpt-4.1-mini
     steps:
       - uses: actions/checkout@v4
       - name: Setup gh extension
@@ -41,7 +43,7 @@ jobs:
           INPUT="$INSTRUCTION\n---\nIssue Title: $ISSUE_TITLE\n\nIssue Body:\n$ISSUE_BODY\n\nComments:\n$COMMENTS"
           echo "$INPUT"
 
-          RESPONSE="$(gh models run gpt-4.1-mini \"$INPUT\")"
+          RESPONSE="$(gh models run \"${{ env.MODEL_NAME }}\" \"$INPUT\")"
           echo "$RESPONSE"
 
           gh issue comment ${{ github.event.issue.number }} --body "$RESPONSE"

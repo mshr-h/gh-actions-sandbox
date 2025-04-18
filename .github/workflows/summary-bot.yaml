@@ -45,7 +45,7 @@ jobs:
           echo "$CONTENT"
 
           # 3. LLMへの入力を構成
-          INPUT="$INSTRUCTION\n---\n$CONTENT"
+          INPUT="@summary-botコメントは無視して。$INSTRUCTION\n---\n$CONTENT"
           echo "INPUT:"
           echo "$INPUT"
 

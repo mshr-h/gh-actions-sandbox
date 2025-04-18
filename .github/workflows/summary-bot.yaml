@@ -37,9 +37,10 @@ jobs:
           echo "$COMMENTS"
 
           # 3. LLMへの入力を構成
-          INPUT="Instruction: $INSTRUCTION\n---\nIssue Title: $ISSUE_TITLE\n\nIssue Body:\n$ISSUE_BODY\n\nComments:\n$COMMENTS"
+          INPUT="$INSTRUCTION\n---\nIssue Title: $ISSUE_TITLE\n\nIssue Body:\n$ISSUE_BODY\n\nComments:\n$COMMENTS"
           echo "$INPUT"
 
           echo "MODEL_RESPONSE=$(gh models run gpt-4.1-mini $INSTRUCTION)" >> ${GITHUB_ENV}
+          echo "$MODEL_RESPONSE"
       - name: Comment
-        run: gh pr comment ${{ github.event.pull_request.number }} --body "${{ env.MODEL_RESPONSE }}"
+        run: gh pr comment ${{ github.event.issue.number }} --body "${{ env.MODEL_RESPONSE }}"

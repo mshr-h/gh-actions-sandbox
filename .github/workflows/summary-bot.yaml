@@ -33,9 +33,11 @@ jobs:
 
           # 2. 過去のコメント取得
           COMMENTS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$ISSUE_COMMENTS_URL" | jq -r '.[] | "\(.user.login): \(.body)"' | tr '\n' '\\n')
+          echo "$COMMENTS"
 
           # 3. LLMへの入力を構成
           INPUT="Issue Title: $ISSUE_TITLE\n\nIssue Body:\n$ISSUE_BODY\n\nComments:\n$COMMENTS\n\nInstruction: $INSTRUCTION"
+          echo "$INPUT"
 
           # 4. OpenAIへ送信（GPT-4も可）
           SUMMARY=$(curl -X POST "https://models.github.ai/inference/chat/completions" \

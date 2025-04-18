@@ -26,18 +26,13 @@ jobs:
         run: |
           EVENT_PATH=$GITHUB_EVENT_PATH
           COMMENT_BODY=$(jq -r .comment.body "$EVENT_PATH")
-          COMMENT_USER=$(jq -r .comment.user.login "$EVENT_PATH")
-          ISSUE_URL=$(jq -r .issue.url "$EVENT_PATH")
-          ISSUE_COMMENTS_URL=$(jq -r .issue.comments_url "$EVENT_PATH")
-          ISSUE_TITLE=$(jq -r .issue.title "$EVENT_PATH")
-          ISSUE_BODY=$(jq -r .issue.body "$EVENT_PATH")
           INSTRUCTION=$(echo "$COMMENT_BODY" | sed -n 's/.*@summary-bot\s*\(.*\)/\1/p')
 
           if [ -z "$INSTRUCTION" ]; then
             INSTRUCTION="${{ env.DEFAULT_INSTRUCTION }}"
           fi
 
-          COMMENTS="$(gh issue view 2 --comments --json title,author,body,comments --template '
+          CONTENT="$(gh issue view 2 --comments --json title,author,body,comments --template '
           Issue title: {{.title}}
           Issue author: {{.author.login}}
           Issue body: {{.body}}
@@ -46,11 +41,11 @@ jobs:
           Comment body: {{.body}}
           ==={{end}}
           ')"
-          echo "COMMENTS:"
-          echo "$COMMENTS"
+          echo "CONTENT:"
+          echo "$CONTENT"
 
           # 3. LLMへの入力を構成
-          INPUT="$INSTRUCTION\n---\nIssue Title: $ISSUE_TITLE\n\nIssue Body:\n$ISSUE_BODY\n\nComments:\n$COMMENTS"
+          INPUT="$INSTRUCTION\n---\n$CONTENT"
           echo "INPUT:"
           echo "$INPUT"
 

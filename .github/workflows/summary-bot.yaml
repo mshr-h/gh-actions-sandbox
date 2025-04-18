@@ -7,7 +7,7 @@ on:
 permissions:
   contents: read
   models: read
-  pull-requests: write
+  issues: write
 
 jobs:
   run-summary-bot:
@@ -30,7 +30,7 @@ jobs:
           INSTRUCTION=$(echo "$COMMENT_BODY" | sed -n 's/.*@summary-bot\s*\(.*\)/\1/p')
 
           if [ -z "$INSTRUCTION" ]; then
-            INSTRUCTION="以下を要約して。"
+            INSTRUCTION="以下のGitHub Issueの議論を要約して。"
           fi
 
           COMMENTS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$ISSUE_COMMENTS_URL" | jq -r '.[] | "\(.user.login): \(.body)"' | tr '\n' '\\n')

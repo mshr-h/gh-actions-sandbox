@@ -37,7 +37,15 @@ jobs:
             INSTRUCTION="${{ env.DEFAULT_INSTRUCTION }}"
           fi
 
-          COMMENTS="$(gh issue view ${{ github.event.issue.number }} --comments)"
+          COMMENTS="$(gh issue view 2 --comments --json title,author,body,comments --template '
+          Issue title: {{.title}}
+          Issue author: {{.author.login}}
+          Issue body: {{.body}}
+          ==={{range .comments}}
+          Comment author: {{.author.login}}
+          Comment body: {{.body}}
+          ==={{end}}
+          ')"
           echo "COMMENTS:"
           echo "$COMMENTS"
 

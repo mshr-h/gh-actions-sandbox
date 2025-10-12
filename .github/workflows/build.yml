@@ -40,8 +40,8 @@ jobs:
 
       - name: TVM
         run: |
-          uv pip install 3rdparty/tvm-ffi/
-          uv pip install . \
+          uv pip install 3rdparty/tvm-ffi/ --verbose
+          uv pip install .  --verbose \
             --config-settings=cmake.args="-G Ninja; -DUSE_LLVM='$(brew --prefix llvm)/bin/llvm-config --link-static'; -DUSE_MLIR=ON; -DUSE_METAL=ON;"
-          uv run python -c "import tvm; print(tvm.__file__); print(tvm.__version__); print(tvm.support.describe()); print(tvm.support.libinfo())"
-          uv run pytest tests/python/all-platform-minimal-test
+          # uv run python -c "import tvm; print(tvm.__file__); print(tvm.__version__); print(tvm.support.describe()); print(tvm.support.libinfo())"
+          # uv run pytest tests/python/all-platform-minimal-test

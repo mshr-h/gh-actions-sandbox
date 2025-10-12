@@ -23,11 +23,9 @@ jobs:
           github-server-url: https://github.com
           path: 'tvm'
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v6
 
-      - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.19
+      - uses: hendrikmuhs/ccache-action@v1.2.19
 
       - uses: actions/setup-python@v4
         with:
@@ -41,8 +39,9 @@ jobs:
 
       - name: TVM
         run: |
-          uv pip install 3rdparty/tvm-ffi/ --verbose
-          uv pip install .  --verbose \
+          ls -l
+          uv pip install tvm/3rdparty/tvm-ffi/ --verbose
+          uv pip install tvm/  --verbose \
             --config-settings=cmake.args="-G Ninja; -DUSE_LLVM='$(brew --prefix llvm)/bin/llvm-config --link-static'; -DUSE_MLIR=ON; -DUSE_METAL=ON;"
           cd ..; python -c "import tvm; print(tvm.__file__); print(tvm.__version__); print(tvm.support.describe()); print(tvm.support.libinfo())"
           pytest tests/python/all-platform-minimal-test

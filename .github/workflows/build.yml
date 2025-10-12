@@ -21,6 +21,7 @@ jobs:
           repository: 'apache/tvm'
           submodules: recursive
           github-server-url: https://github.com
+          path: 'tvm'
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6

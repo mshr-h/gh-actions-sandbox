@@ -23,6 +23,8 @@ jobs:
           github-server-url: https://github.com
 
       - uses: astral-sh/setup-uv@v6
+        with:
+          activate-environment: "true"
 
       - uses: hendrikmuhs/ccache-action@v1.2.19
 
@@ -33,16 +35,14 @@ jobs:
       - name: Install dependencies
         run: |
           brew install llvm
-          uv venv && source .venv/bin/activate
           uv pip install -U pip numpy cmake ninja wheel cython build setuptools pytest
 
       - name: TVM
         run: |
           ls -l
-          source .venv/bin/activate
           uv pip install 3rdparty/tvm-ffi/ --verbose
           uv pip install .  --verbose \
             --config-settings=cmake.args="-G Ninja; -DUSE_LLVM='$(brew --prefix llvm)/bin/llvm-config --link-static'; -DUSE_MLIR=ON; -DUSE_METAL=ON;"
           mkdir tmp; cd tmp;
           python -c "import tvm; print(tvm.__file__); print(tvm.__version__); print(tvm.support.describe()); print(tvm.support.libinfo())"
-          pytest tests/python/all-platform-minimal-test
+          pytest ../tests/python/all-platform-minimal-test

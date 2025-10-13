@@ -40,6 +40,7 @@ jobs:
       - name: TVM
         run: |
           ls -l
+          source .venv/bin/activate
           uv pip install tvm/3rdparty/tvm-ffi/ --verbose
           uv pip install tvm/  --verbose \
             --config-settings=cmake.args="-G Ninja; -DUSE_LLVM='$(brew --prefix llvm)/bin/llvm-config --link-static'; -DUSE_MLIR=ON; -DUSE_METAL=ON;"

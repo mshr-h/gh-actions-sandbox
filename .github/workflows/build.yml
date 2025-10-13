@@ -43,5 +43,6 @@ jobs:
           uv pip install tvm/3rdparty/tvm-ffi/ --verbose
           uv pip install tvm/  --verbose \
             --config-settings=cmake.args="-G Ninja; -DUSE_LLVM='$(brew --prefix llvm)/bin/llvm-config --link-static'; -DUSE_MLIR=ON; -DUSE_METAL=ON;"
-          cd ..; python -c "import tvm; print(tvm.__file__); print(tvm.__version__); print(tvm.support.describe()); print(tvm.support.libinfo())"
-          pytest tests/python/all-platform-minimal-test
+          mkdir tmp; cd tmp;
+          python -c "import tvm; print(tvm.__file__); print(tvm.__version__); print(tvm.support.describe()); print(tvm.support.libinfo())"
+          pytest ../tvm/tests/python/all-platform-minimal-test
